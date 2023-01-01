@@ -1,1 +1,1 @@
-# ViennaSmartType
+## ViennaStrongType
