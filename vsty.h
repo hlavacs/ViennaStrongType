@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include <utility>
 
 namespace vsty {
 
@@ -14,7 +15,6 @@ namespace vsty {
 	*/
     template<typename T, size_t P = 0>
     struct strong_type_t {
-
         T value{};
         strong_type_t() = default;
         explicit strong_type_t(const T& v) noexcept { value = v; };
@@ -31,12 +31,38 @@ namespace vsty {
         strong_type_t<T, P>& operator=(const strong_type_t<T, P>& v) noexcept { value = v.value; return *this; };
         strong_type_t<T, P>& operator=(strong_type_t<T, P>&& v) noexcept { value = std::move(v.value); return *this; };
 
-        auto operator<=>(const strong_int_t<T, P, D>& v) noexcept { return value <=> v.value; };
-
         struct hash {
             std::size_t operator()(const strong_type_t<T, P>& tag) const noexcept { return std::hash<T>()(tag.value); };
         };
     };
+
+
+	template<typename T, auto D, size_t P = 0>
+	struct strong_null_t {
+		T value{D};
+		strong_null_t() = default;
+		explicit strong_null_t(const T& v) noexcept { value = v; };
+		explicit strong_null_t(T&& v) noexcept { value = std::move(v); };
+
+		strong_null_t(const strong_null_t<T, D, P>& v) noexcept { value = v.value; };
+		strong_null_t(strong_null_t<T, D, P>&& v) noexcept { value = std::move(v.value); };
+
+		operator const T& () const noexcept { return value; }
+		operator T& () noexcept { return value; }
+
+		strong_null_t<T, D, P>& operator=(const T& v) noexcept { value = v; return *this; };
+		strong_null_t<T, D, P>& operator=(T&& v) noexcept { value = std::move(v); return *this; };
+		strong_null_t<T, D, P>& operator=(const strong_null_t<T, D, P>& v) noexcept { value = v.value; return *this; };
+		strong_null_t<T, D, P>& operator=(strong_null_t<T, D, P>&& v) noexcept { value = std::move(v.value); return *this; };
+
+		auto operator<=>(const strong_null_t<T, D, P>& v) noexcept { return value <=> v.value; };
+
+		bool has_value() const noexcept { return value != D;}
+
+		struct hash {
+			std::size_t operator()(const strong_null_t<T, D, P>& tag) const noexcept { return std::hash<T>()(tag.value); };
+		};
+	};
 
 
 	/**
@@ -47,13 +73,11 @@ namespace vsty {
 	* D...default value (=null value)
 	* U...number of upper bits (if integer is cut into 2 values)
 	*/
-	template<typename T, size_t P = 0, auto D = std::numeric_limits<T>::max(), size_t U = 0>
+	template<typename T, auto D = std::numeric_limits<T>::max(), size_t P = 0, size_t U = 0>
 	struct strong_int_t {
 		static const T L = sizeof(T) * 8 - U; //number of lower bits (if integer is cut into 2 values)
 
-		static const T null = static_cast<T>(D); //numm value
-
-		T value{ null };
+		T value{ D };
 
 		strong_int_t() = default;
 
@@ -89,7 +113,7 @@ namespace vsty {
 		* \brief Comparison operator.
 		* \returns the default comparison.
 		*/
-		auto operator<=>(const strong_int_t<T, P, D>& v) noexcept { return value <=> v.value; };
+		auto operator<=>(const strong_int_t<T, D, P, U>& v) noexcept { return value <=> v.value; };
 
 		/**
 		* \brief Comparison operator.
@@ -124,7 +148,7 @@ namespace vsty {
 		* \brief Pre-increment operator.
 		* \returns the value increased by 1.
 		*/
-		strong_int_t<T, P, D> operator++() noexcept {
+		strong_int_t<T, D, P, U> operator++() noexcept {
 			value++;
 			if (!has_value()) value = 0;
 			return *this;
@@ -134,8 +158,8 @@ namespace vsty {
 		* \brief Post-increment operator.
 		* \returns the old value before increasing by 1.
 		*/
-		strong_int_t<T, P, D> operator++(int) noexcept {
-			strong_int_t<T, P, D> res = *this;
+		strong_int_t<T, D, P, U> operator++(int) noexcept {
+			strong_int_t<T, D, P, U> res = *this;
 			value++;
 			if (!has_value()) value = 0;
 			return res;
@@ -145,7 +169,7 @@ namespace vsty {
 		* \brief Pre-decrement operator.
 		* \returns the value decreased by 1.
 		*/
-		strong_int_t<T, P, D> operator--() noexcept {
+		strong_int_t<T, D, P, U> operator--() noexcept {
 			--value;
 			if (!has_value()) --value;
 			return *this;
@@ -155,8 +179,8 @@ namespace vsty {
 		* \brief Post-decrement operator.
 		* \returns the value before decreasing by 1.
 		*/
-		strong_int_t<T, P, D> operator--(int) noexcept {
-			strong_int_t<T, P, D> res = *this;
+		strong_int_t<T, D, P, U> operator--(int) noexcept {
+			strong_int_t<T, D, P, U> res = *this;
 			value--;
 			if (!has_value()) value--;
 			return res;
@@ -170,7 +194,7 @@ namespace vsty {
 			* \param[in] tg The input int value.
 			* \returns the hash of the int value.
 			*/
-			std::size_t operator()(const strong_int_t<T, P, D>& tg) const { return std::hash<T>()(tg.value); };
+			std::size_t operator()(const strong_int_t<T, D, P, U>& tg) const { return std::hash<T>()(tg.value); };
 		};
 
 		/**
@@ -186,7 +210,7 @@ namespace vsty {
 		* \returns true if the value is not null (the default value).
 		*/
 		bool has_value() const {
-			return value != null;
+			return value != D;
 		}
 
 		/**
