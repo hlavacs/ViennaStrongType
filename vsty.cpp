@@ -2,10 +2,12 @@
 #include "vsty.h"
 #include <string>
 
-using strong_int_t = vsty::strong_type_t<size_t, vsty::counter<> >;
-using strong_size_t = vsty::strong_integral_t<size_t, vsty::counter<> >;
-using strong_size_t2 = vsty::strong_integral_t<size_t, vsty::counter<> >;
-using strong_uint32_t = vsty::strong_type_t<size_t, vsty::counter<> >;
+using strong_int_t		= vsty::strong_type_t< size_t, vsty::counter<> >;
+using strong_uint32_t	= vsty::strong_type_t< size_t, vsty::counter<> >;
+
+using strong_size_t		= vsty::strong_integral_t< size_t, vsty::counter<> >;
+using strong_size_t2	= vsty::strong_integral_t< size_t, vsty::counter<> >;
+
 
 
 int main() {
