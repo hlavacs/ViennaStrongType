@@ -174,26 +174,24 @@ namespace vsty {
 	};
 
 
-	//--------------------------------------------------------
+	//--------------------------------------------------------------------------------------------
 	//type counter lifted from https://mc-deltat.github.io/articles/stateful-metaprogramming-cpp20
 
-	template<unsigned N>
+	template<size_t N>
 	struct reader {
 		friend auto counted_flag(reader<N>);
 	};
 
-
-	template<unsigned N>
+	template<size_t N>
 	struct setter {
 		friend auto counted_flag(reader<N>) {}
 
-		static constexpr unsigned n = N;
+		static constexpr size_t n = N;
 	};
-
 
 	template<
 		auto Tag,
-		unsigned NextVal = 0
+		size_t NextVal = 0
 	>
 	[[nodiscard]]
 	consteval auto counter_impl() {
@@ -209,7 +207,6 @@ namespace vsty {
 			return s.n;
 		}
 	}
-
 
 	template<
 		auto Tag = [] {},
