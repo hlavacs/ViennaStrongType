@@ -1,10 +1,10 @@
 
 #include "vsty.h"
+#include <string>
 
-
-using strong_int_t = vsty::strong_type_t<int, 1>;
-using strong_size_t = vsty::strong_integral_t<int, strong_int_t::PP + 1>;
-using strong_uint32_t = vsty::strong_type_t<int, strong_size_t::PP + 1>;
+using strong_int_t = vsty::strong_type_t<int, 1111 >;
+using strong_size_t = vsty::strong_integral_t<int, strong_int_t::PP + 1 >;
+using strong_uint32_t = vsty::strong_type_t<int, strong_size_t::PP + 1 >;
 
 
 int main() {
