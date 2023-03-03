@@ -5,6 +5,10 @@
 
 namespace vsty {
 
+	template<typename T>
+	concept Hashable = requires(T a) {
+		{ std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+	};
 
 	/**
 	* \brief General strong type
@@ -32,13 +36,13 @@ namespace vsty {
         strong_type_t<T, P>& operator=(strong_type_t<T, P>&& v) noexcept { value = std::move(v.value); return *this; };
 
 		auto operator<=>(const strong_type_t<T, P>& v) noexcept requires std::totally_ordered<std::decay_t<T>> { return value <=> v.value; };
-
+		
 		struct equal_to {
 			constexpr bool operator()(const T& lhs, const T& rhs) const noexcept requires std::equality_comparable<std::decay_t<T>> { return lhs == rhs; };
 		};
-
+		
         struct hash {
-            std::size_t operator()(const strong_type_t<T, P>& tag) const noexcept { return std::hash<T>()(tag.value); };
+            std::size_t operator()(const strong_type_t<T, P>& tag) const noexcept requires Hashable<std::decay_t<T>> { return std::hash<T>()(tag.value); };
         };
     };
 
