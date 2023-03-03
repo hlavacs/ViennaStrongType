@@ -31,10 +31,10 @@ namespace vsty {
         strong_type_t<T, P>& operator=(const strong_type_t<T, P>& v) noexcept { value = v.value; return *this; };
         strong_type_t<T, P>& operator=(strong_type_t<T, P>&& v) noexcept { value = std::move(v.value); return *this; };
 
-		auto operator<=>(const strong_type_t<T, P>& v) noexcept { return value <=> v.value; };
+		auto operator<=>(const strong_type_t<T, P>& v) noexcept requires std::totally_ordered<std::decay_t<T>> { return value <=> v.value; };
 
 		struct equal_to {
-			constexpr bool operator()(const T& lhs, const T& rhs) const { return lhs == rhs; };
+			constexpr bool operator()(const T& lhs, const T& rhs) const noexcept requires std::equality_comparable<std::decay_t<T>> { return lhs == rhs; };
 		};
 
         struct hash {
