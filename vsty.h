@@ -65,7 +65,8 @@ namespace vsty {
 
 
 	/**
-	* \brief Strong integral type, like size_t or uint32_t. Can be split into two integral values (upper and lower)
+	* \brief Strong integral type, like size_t or uint32_t. Can be split into two integral values (upper and lower).
+	* This works ONLY if the integral type is unsigned!!
 	*
 	* T...the integer type
 	* P...phantom type as unique ID (can use __COUNTER__ or vsty::counter<>)
@@ -78,9 +79,9 @@ namespace vsty {
 		static const size_t L = sizeof(T) * 8ull - U; //number of lower bits (if integer is cut into 2 values)
 
 		static consteval T lmask() {
-			if (L == 0) return 0ull;
-			if (U == 0) return ~0ull >> (64 - (L + U));
-			return ~0ull >> (64 - L);
+			if (L == 0) return static_cast<T>(0ull);
+			if (U == 0) return static_cast<T>(~0ull);
+			return static_cast<T>(~0ull >> (64 - L));
 		}
 
 		static const T LMASK = lmask();
@@ -99,8 +100,8 @@ namespace vsty {
 		auto operator--() noexcept { --value; return *this; };
 		auto operator--(int) noexcept { return strong_integral_t<T, P, U>(value--); };
 
-		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { value = (value & LMASK) | (value << L); }
-		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return (value >> L); }
+		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { value = (value & LMASK) | (v << L); } } 
+		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { return value >> L; } return static_cast<T>(0); }
 		auto set_lower(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { value = (value & UMASK) | (v & LMASK); }
 		auto get_lower()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return (value & LMASK); }
 	};
@@ -115,7 +116,8 @@ namespace vsty {
 	* U...number of upper bits (if integer is cut into 2 values), or else 0
 	*/
 	template<typename T, auto P, auto D = std::numeric_limits<T>::max(), size_t U = 0>
-	struct strong_integral_null_t : strong_type_t<T, P> {
+		requires std::is_integral_v<std::decay_t<T>>
+	struct strong_integral_null_t : strong_integral_t<T, P> {
 		using strong_integral_t<T, P>::value;
 		static const T null{ D };
 		strong_integral_null_t() { value = D; };
