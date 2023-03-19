@@ -112,12 +112,12 @@ namespace vsty {
 		auto operator--() noexcept { --value; return *this; };
 		auto operator--(int) noexcept { return strong_integral_t<T, P, U, M>(value--); };
 
-		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { value = (value & LMASK) | (v << L); } } 
-		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { return value >> L; } return static_cast<T>(0); }
-		auto set_middle(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> {  }
-		auto get_middle()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return 0; }
-		auto set_lower(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { value = (value & UMASK) | (v & LMASK); }
-		auto get_lower()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return (value & LMASK); }
+		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { value = (value & (LMASK | MMASK)) | ( (v << (L+M)) & UMASK); } } 
+		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { return value >> (L+M); } return static_cast<T>(0); }	
+		auto set_middle(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (M > 0) { value = (value & (LMASK | UMASK)) | ((v << L) & MMASK); } }
+		auto get_middle()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (M > 0) { return (value & MMASK) >> L; } return static_cast<T>(0); }
+		auto set_lower(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { value = (value & (UMASK | MMASK)) | (v & LMASK); }
+		auto get_lower()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return value & LMASK; }
 	};
 
 

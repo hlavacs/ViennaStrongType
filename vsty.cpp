@@ -1,13 +1,16 @@
-
-#include "vsty.h"
 #include <string>
 #include <cassert>
+#include <iostream>
+#include <iomanip>
+#include <format>
+
+#include "vsty.h"
 
 using strong_int_t		= vsty::strong_type_t< size_t, vsty::counter<> >;
 using strong_uint32_t	= vsty::strong_type_t< uint32_t, vsty::counter<> >;
 
 using strong_size_t		= vsty::strong_integral_t< size_t, vsty::counter<>, 16 >;
-using strong_size_t2	= vsty::strong_integral_t< uint32_t, vsty::counter<>, 16 >;
+using strong_size_t2	= vsty::strong_integral_t< uint32_t, vsty::counter<>, 8, 8 >;
 
 using strong_float_t	= vsty::strong_type_t< float, vsty::counter<> >;
 using strong_double_t	= vsty::strong_type_t< double, vsty::counter<> >;
@@ -38,15 +41,19 @@ int main() {
 	auto um = strong_size_t2::UMASK;
 	auto mm = strong_size_t2::MMASK;
 	auto lm = strong_size_t2::LMASK;
+	std::cout << std::format("{:08x}",um) << " "  << std::format("{:08x}", mm) << " " << std::format("{:08x}", lm) << "\n";
 
-	si.set_lower(0x0F0F);
-	si.set_upper(0x0FF0);
+	si.set_lower(0xFDFD);
+	si.set_middle(0x0F);
+	si.set_upper(0xFE);
 
 	auto gl = si.get_lower(); 
+	auto gm = si.get_middle();
 	auto gu = si.get_upper();
 
-	assert(gl == 0x0F0F);
-	assert(gu == 0x0FF0);
+	assert(gl == 0xFDFD);
+	assert(gm == 0x0F);
+	assert(gu == 0xFE);
 
 }
 
