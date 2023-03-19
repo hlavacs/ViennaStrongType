@@ -36,6 +36,7 @@ int main() {
 	strong_size_t2 si{0};
 
 	auto um = strong_size_t2::UMASK;
+	auto mm = strong_size_t2::MMASK;
 	auto lm = strong_size_t2::LMASK;
 
 	si.set_lower(0x0F0F);
