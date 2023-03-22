@@ -36,8 +36,8 @@ namespace vsty {
 		operator const T& () const noexcept { return value; }	//retrieve value
 		operator T& () noexcept { return value; }				//retrieve value
 
-		auto operator<=>(const strong_type_t<T, P>& v) noexcept requires std::totally_ordered<std::decay_t<T>> { return value <=> v.value; };
-		
+		auto operator<=>(const strong_type_t<T, P>& v) const = default;
+	
 		struct equal_to {
 			constexpr bool operator()(const T& lhs, const T& rhs) const noexcept requires std::equality_comparable<std::decay_t<T>> { return lhs == rhs; };
 		};
@@ -119,6 +119,8 @@ namespace vsty {
 		operator T& () noexcept { return value; }				//retrieve value
 
 		//-----------------------------------------------------------------------------------
+
+		auto operator<=>(const strong_integral_t<T, P, U, M>& v) const = default;
 
 		T operator<<(const size_t N) noexcept { return value << N; };
 		T operator>>(const size_t N) noexcept { return value >> N; };
