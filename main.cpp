@@ -32,6 +32,15 @@ int main() {
 	//g(2); //error
 	//h(3); //error
 
+	bool itc = std::is_trivially_copyable_v<strong_size_t>;
+
+	bool imc = std::is_move_constructible_v<strong_size_t>;
+	bool icc = std::is_copy_constructible_v<strong_size_t>;
+	bool ica = std::is_copy_assignable_v<strong_size_t>;
+	bool ima = std::is_move_assignable_v<strong_size_t>;
+
+	std::atomic<strong_size_t> atom;
+
 	f(strong_int_t{ 2 });
 	g(strong_size_t{ 2 });
 	h(strong_size_t2{ 3 });

@@ -20,20 +20,21 @@ namespace vsty {
     struct strong_type_t {
         T value{};
 
-        strong_type_t() = default;
-        explicit strong_type_t(const T& v) noexcept { value = v; };
-        explicit strong_type_t(T&& v) noexcept { value = std::move(v); };
+        strong_type_t() noexcept = default;									//default constructible
+        explicit strong_type_t(const T& v) noexcept { value = v; };			//explicit from type T
+        explicit strong_type_t(T&& v) noexcept { value = std::move(v); };	//explicit from type T
 
-        strong_type_t(const strong_type_t<T, P>& v) noexcept { value = v.value; };
-        strong_type_t(strong_type_t<T, P>&& v) noexcept { value = std::move(v.value); };
+        strong_type_t( strong_type_t<T, P> const &) noexcept = default;		//copy constructible
+        strong_type_t( strong_type_t<T, P>&&) noexcept = default;			//move constructible
 
-        operator const T& () const noexcept { return value; }
-        operator T& () noexcept { return value; }
+        strong_type_t<T, P>& operator=(T const& v) noexcept { value = v; return *this; };		//copy assignable from type T
+        strong_type_t<T, P>& operator=(T&& v) noexcept { value = std::move(v); return *this; };	//copy assignable from type T
 
-        strong_type_t<T, P>& operator=(const T& v) noexcept { value = v; return *this; };
-        strong_type_t<T, P>& operator=(T&& v) noexcept { value = std::move(v); return *this; };
-        strong_type_t<T, P>& operator=(const strong_type_t<T, P>& v) noexcept { value = v.value; return *this; };
-        strong_type_t<T, P>& operator=(strong_type_t<T, P>&& v) noexcept { value = std::move(v.value); return *this; };
+        strong_type_t<T, P>& operator=(strong_type_t<T, P> const&) noexcept = default;	//move assignable
+        strong_type_t<T, P>& operator=(strong_type_t<T, P>&&) noexcept = default;			//move assignable
+
+		operator const T& () const noexcept { return value; }	//retrieve value
+		operator T& () noexcept { return value; }				//retrieve value
 
 		auto operator<=>(const strong_type_t<T, P>& v) noexcept requires std::totally_ordered<std::decay_t<T>> { return value <=> v.value; };
 		
@@ -84,15 +85,15 @@ namespace vsty {
 		static const size_t L = BITS - U - M; //number of lower bits (if integer is cut into 2/3 values)
 
 		static consteval T lmask() {
-			if (L == 0) return static_cast<T>(0ull);
-			if (U == 0 && M == 0) return static_cast<T>(~0ull);
-			return static_cast<T>(~0ull) >> (BITS - L);
+			if constexpr (L == 0) return static_cast<T>(0ull);
+			else if constexpr (U == 0 && M == 0) return static_cast<T>(~0ull);
+			else return static_cast<T>(~0ull) >> (BITS - L);
 		}
 
 		static consteval T umask() {
-			if (U == 0) return static_cast<T>(0ull);
-			if (M == 0 && L == 0) return static_cast<T>(~0ull);
-			return static_cast<T>(~0ull) << (BITS - U);
+			if constexpr (U == 0) return static_cast<T>(0ull);
+			else if constexpr (M == 0 && L == 0) return static_cast<T>(~0ull);
+			else return static_cast<T>(~0ull) << (BITS - U);
 		}
 
 		static const T LMASK = lmask();
@@ -100,8 +101,24 @@ namespace vsty {
 		static const T MMASK = ~(LMASK | UMASK);
 
 		using strong_type_t<T, P>::value;
-		strong_integral_t() noexcept = default;
-		explicit strong_integral_t(const T& v) noexcept : strong_type_t<T, P>(v) {};
+
+		strong_integral_t() noexcept = default;											//default constructible
+		explicit strong_integral_t(const T& v) noexcept : strong_type_t<T, P>(v) {};	//explicit from type T
+		explicit strong_integral_t(T&& v) noexcept : strong_type_t<T, P>(v) {};			//explicit from type T
+
+		strong_integral_t(strong_integral_t<T, P, U, M> const&) noexcept = default;	//copy constructible
+		strong_integral_t(strong_integral_t<T, P, U, M>&& v) noexcept = default;	//move constructible
+
+		strong_integral_t<T, P, U, M>& operator=(T const& v) noexcept { value = v; return *this; };		//copy assignable
+		strong_integral_t<T, P, U, M>& operator=(T&& v) noexcept { value = std::move(v); return *this; };	//copy assignable
+
+		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M> const&) noexcept = default;		//move assignable
+		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M>&&) noexcept = default;	//move assignable
+
+		operator const T& () const noexcept { return value; }	//retrieve value
+		operator T& () noexcept { return value; }				//retrieve value
+
+		//-----------------------------------------------------------------------------------
 
 		T operator<<(const size_t N) noexcept { return value << N; };
 		T operator>>(const size_t N) noexcept { return value >> N; };
