@@ -7,9 +7,9 @@ set(INCLUDE ${CMAKE_HOME_DIRECTORY})
 
 set(TARGET vsty)
 
-set(SOURCE vsty.cpp)
+set(SOURCE main.cpp)
 
-set(HEADERS vsty.h)
+set(HEADERS VSTY.h)
 
 add_executable(${TARGET} ${SOURCE} ${HEADERS})
 
