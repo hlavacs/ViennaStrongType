@@ -127,14 +127,14 @@ namespace vsty {
 
 		auto operator<=>(const strong_integral_t<T, P, U, M>& v) const = default;
 
-		T operator<<(const size_t N) noexcept { return value << N; };
-		T operator>>(const size_t N) noexcept { return value >> N; };
-		T operator&(const size_t N) noexcept { return value & N; };
+		strong_integral_t<T, P, U, M> operator<<(const size_t N) noexcept { return { value << N }; };
+		strong_integral_t<T, P, U, M> operator>>(const size_t N) noexcept { return { value >> N }; };
+		strong_integral_t<T, P, U, M> operator&(const size_t N) noexcept { return { value & N }; };
 
-		auto operator++() noexcept { ++value; return *this; };
-		auto operator++(int) noexcept { return strong_integral_t<T, P, U, M>(value++); };
-		auto operator--() noexcept { --value; return *this; };
-		auto operator--(int) noexcept { return strong_integral_t<T, P, U, M>(value--); };
+		strong_integral_t<T, P, U, M>& operator++() noexcept { ++value; return *this; };
+		strong_integral_t<T, P, U, M> operator++(int) noexcept { return strong_integral_t<T, P, U, M>(value++); };
+		strong_integral_t<T, P, U, M>& operator--() noexcept { --value; return *this; };
+		strong_integral_t<T, P, U, M> operator--(int) noexcept { return strong_integral_t<T, P, U, M>(value--); };
 
 		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { value = (value & (LMASK | MMASK)) | ( (v << (L+M)) & UMASK); } } 
 		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { return value >> (L+M); } return static_cast<T>(0); }	
