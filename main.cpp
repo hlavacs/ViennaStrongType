@@ -11,6 +11,7 @@ using strong_uint32_t	= vsty::strong_type_t< uint32_t, vsty::counter<> >;
 
 using strong_size_t		= vsty::strong_integral_t< size_t, vsty::counter<>, 16 >;
 using strong_size_t2	= vsty::strong_integral_t< uint32_t, vsty::counter<>, 8, 8 >;
+using strong_size_null_t = vsty::strong_integral_null_t< size_t, vsty::counter<>, std::numeric_limits<size_t>::max(), 8, 8 >;
 
 using strong_float_t	= vsty::strong_type_t< float, vsty::counter<> >;
 using strong_double_t	= vsty::strong_type_t< double, vsty::counter<> >;
@@ -40,6 +41,9 @@ int main() {
 	bool ima = std::is_move_assignable_v<strong_size_t>;
 
 	std::atomic<strong_size_t> atom;
+	atom.store(strong_size_t{ 6 });
+	std::atomic<strong_size_null_t> atom2;
+	atom2.store(strong_size_null_t{1});
 
 	f(strong_int_t{ 2 });
 	g(strong_size_t{ 2 });
@@ -65,7 +69,8 @@ int main() {
 	assert(gu == 0xFE);
 
 	strong_size_t v1{13}, v2{5};
-	strong_size_t v3 = v1 + v2;
+	strong_size_t v3;
+	v3 = v1 + v2;
 	v3 = v1 - v2;
 	v3 = v1 * v2;
 	v3 = v1 / v2;
@@ -74,5 +79,8 @@ int main() {
 	auto A = v2++;
 	auto B = ++v2;
 
+	strong_size_null_t nn1{ 21 }, nn2{ 18 }, nn3{4};
+	nn1.set_lower(32);
+	nn1 = nn2 + nn3;
 }
 

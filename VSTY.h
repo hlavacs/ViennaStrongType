@@ -66,18 +66,19 @@ namespace vsty {
 
 
 	/**
-	* \brief Strong integral type, like size_t or uint32_t. Can be split into three integral values 
-	* (upper, middle and lower).
-	* This works ONLY if the integral type is unsigned!!
+	* \brief Strong integral basis type, like size_t or uint32_t. 
+	* Can be split into three integral values (upper, middle and lower).
+	* NOTE: This works ONLY if the integral type is unsigned!!
+	* NOTE: This is a basis class that uses CRTP to determine the value type.
 	*
 	* T...the integer type
 	* P...phantom type as unique ID (can use __COUNTER__ or vsty::counter<>)
 	* U...number of upper bits (if integer is cut into 2 values), or else 0
 	* M...number of middle bits (if integer is cut into 3 values), or else 0
 	*/
-	template<typename T, auto P, size_t U = 0, size_t M = 0>
+	template<typename T, typename IT, auto P, size_t U = 0, size_t M = 0>
 		requires std::is_integral_v<std::decay_t<T>>
-	struct strong_integral_t : strong_type_t<T, P>  {
+	struct strong_integral_tt : strong_type_t<T, P>  {
 
 		static const size_t BITS = sizeof(T) * 8ull;
 		static_assert(BITS >= U+M);
@@ -102,39 +103,39 @@ namespace vsty {
 
 		using strong_type_t<T, P>::value;
 
-		strong_integral_t() noexcept = default;											//default constructible
-		explicit strong_integral_t(const T& v) noexcept : strong_type_t<T, P>(v) {};	//explicit from type T
-		explicit strong_integral_t(T&& v) noexcept : strong_type_t<T, P>(v) {};			//explicit from type T
+		strong_integral_tt() noexcept = default;											//default constructible
+		explicit strong_integral_tt(const T& v) noexcept : strong_type_t<T, P>(v) {};	//explicit from type T
+		explicit strong_integral_tt(T&& v) noexcept : strong_type_t<T, P>(v) {};			//explicit from type T
 
-		strong_integral_t(strong_integral_t<T, P, U, M> const&) noexcept = default;	//copy constructible
-		strong_integral_t(strong_integral_t<T, P, U, M>&& v) noexcept = default;	//move constructible
+		strong_integral_tt(strong_integral_tt<T, IT, P, U, M> const&) noexcept = default;	//copy constructible
+		strong_integral_tt(strong_integral_tt<T, IT, P, U, M>&& v) noexcept = default;	//move constructible
 
-		strong_integral_t<T, P, U, M>& operator=(T const& v) noexcept { value = v; return *this; };			//copy assignable
-		strong_integral_t<T, P, U, M>& operator=(T&& v) noexcept { value = std::move(v); return *this; };	//copy assignable
+		strong_integral_tt<T, IT, P, U, M>& operator=(T const& v) noexcept { value = v; return *this; };			//copy assignable
+		strong_integral_tt<T, IT, P, U, M>& operator=(T&& v) noexcept { value = std::move(v); return *this; };	//copy assignable
 
-		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M> const&) noexcept = default;	//move assignable
-		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M>&&) noexcept = default;		//move assignable
-
-		strong_integral_t<T, P, U, M> operator+(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value + r.value }; };
-		strong_integral_t<T, P, U, M> operator-(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value - r.value }; };
-		strong_integral_t<T, P, U, M> operator*(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value * r.value }; };
-		strong_integral_t<T, P, U, M> operator/(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value / r.value }; };
+		strong_integral_tt<T, IT, P, U, M>& operator=(strong_integral_tt<T, IT, P, U, M> const&) noexcept = default;	//move assignable
+		strong_integral_tt<T, IT, P, U, M>& operator=(strong_integral_tt<T, IT, P, U, M>&&) noexcept = default;		//move assignable
 
 		operator const T& () const noexcept { return value; }	//retrieve value
 		operator T& () noexcept { return value; }				//retrieve value
 
 		//-----------------------------------------------------------------------------------
 
-		auto operator<=>(const strong_integral_t<T, P, U, M>& v) const = default;
+		auto operator<=>(const strong_integral_tt<T, IT, P, U, M>& v) const = default;
 
-		strong_integral_t<T, P, U, M> operator<<(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value << N }; };
-		strong_integral_t<T, P, U, M> operator>>(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value >> N }; };
-		strong_integral_t<T, P, U, M> operator&(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value& N }; };
+		IT operator+(strong_integral_tt<T, IT, P, U, M> const& r) { return IT{ value + r.value }; };
+		IT operator-(strong_integral_tt<T, IT, P, U, M> const& r) { return IT{ value - r.value }; };
+		IT operator*(strong_integral_tt<T, IT, P, U, M> const& r) { return IT{ value* r.value }; };
+		IT operator/(strong_integral_tt<T, IT, P, U, M> const& r) { return IT{ value / r.value }; };
 
-		strong_integral_t<T, P, U, M>& operator++() noexcept { ++value; return *this; };
-		strong_integral_t<T, P, U, M> operator++(int) noexcept { return strong_integral_t<T, P, U, M>(value++); };
-		strong_integral_t<T, P, U, M>& operator--() noexcept { --value; return *this; };
-		strong_integral_t<T, P, U, M> operator--(int) noexcept { return strong_integral_t<T, P, U, M>(value--); };
+		IT operator<<(const size_t N) noexcept { return IT{ value << N }; };
+		IT operator>>(const size_t N) noexcept { return IT{ value >> N }; };
+		IT operator&(const size_t N) noexcept { return IT{ value& N }; };
+
+		IT operator++() noexcept { ++value; IT it{ *this }; return it; };
+		IT operator++(int) noexcept { IT it(value++); return it; };
+		IT operator--() noexcept { --value; IT it{ *this }; return it; };
+		IT operator--(int) noexcept { IT it(value--); return it; };
 
 		auto set_upper(T v) noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { value = (value & (LMASK | MMASK)) | ( (v << (L+M)) & UMASK); } } 
 		auto get_upper()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { if constexpr (U > 0) { return value >> (L+M); } return static_cast<T>(0); }	
@@ -144,6 +145,21 @@ namespace vsty {
 		auto get_lower()    noexcept requires std::is_unsigned_v<std::decay_t<T>> { return value & LMASK; }
 	};
 
+	/**
+	* \brief Strong integral type.
+	*
+	* T...the type
+	* P...phantom type as unique ID (can use __COUNTER__ or vsty::counter<>)
+	* U...number of upper bits (if integer is cut into 2 values), or else 0
+	* M...number of middle bits (if integer is cut into 3 values), or else 0
+	*/
+	template<typename T, auto P, size_t U = 0, size_t M = 0>
+		requires std::is_integral_v<std::decay_t<T>>
+	struct strong_integral_t : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M> {
+		strong_integral_t() noexcept = default;											//default constructible
+		explicit strong_integral_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M>(v) {};	//explicit from type T
+		explicit strong_integral_t(T&& v) noexcept : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M>(v) {};			//explicit from type T
+	};
 
 	/**
 	* \brief Strong integral type with a null value. 
@@ -154,13 +170,16 @@ namespace vsty {
 	* U...number of upper bits (if integer is cut into 2 values), or else 0
 	* M...number of middle bits (if integer is cut into 3 values), or else 0
 	*/
-	template<typename T, auto P, auto D = std::numeric_limits<T>::max(), size_t U = 0, size_t M = 0>
+	template<typename T,  auto P, auto D = std::numeric_limits<T>::max(), size_t U = 0, size_t M = 0>
 		requires std::is_integral_v<std::decay_t<T>>
-	struct strong_integral_null_t : strong_integral_t<T, P, U, M> {
-		using strong_integral_t<T, P, U, M>::value;
+	struct strong_integral_null_t : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M> {
+		using strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>::value;
 		static const T null{ D };
-		strong_integral_null_t() { value = D; };
-		explicit strong_integral_null_t(const T& v) : strong_integral_t<T, P, U, M>(v) {};
+
+		strong_integral_null_t() noexcept { value = D; };  //NOT default constructible
+		explicit strong_integral_null_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>(v) {};	//explicit from type T
+		explicit strong_integral_null_t(T&& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>(v) {};			//explicit from type T
+
 		bool has_value() const noexcept { return value != D; }
 	};
 
