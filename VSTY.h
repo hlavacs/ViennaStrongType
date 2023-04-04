@@ -127,9 +127,9 @@ namespace vsty {
 
 		auto operator<=>(const strong_integral_t<T, P, U, M>& v) const = default;
 
-		strong_integral_t<T, P, U, M> operator<<(const size_t N) noexcept { return { value << N }; };
-		strong_integral_t<T, P, U, M> operator>>(const size_t N) noexcept { return { value >> N }; };
-		strong_integral_t<T, P, U, M> operator&(const size_t N) noexcept { return { value & N }; };
+		strong_integral_t<T, P, U, M> operator<<(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value << N }; };
+		strong_integral_t<T, P, U, M> operator>>(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value >> N }; };
+		strong_integral_t<T, P, U, M> operator&(const size_t N) noexcept { return strong_integral_t<T, P, U, M>{ value& N }; };
 
 		strong_integral_t<T, P, U, M>& operator++() noexcept { ++value; return *this; };
 		strong_integral_t<T, P, U, M> operator++(int) noexcept { return strong_integral_t<T, P, U, M>(value++); };
