@@ -109,11 +109,16 @@ namespace vsty {
 		strong_integral_t(strong_integral_t<T, P, U, M> const&) noexcept = default;	//copy constructible
 		strong_integral_t(strong_integral_t<T, P, U, M>&& v) noexcept = default;	//move constructible
 
-		strong_integral_t<T, P, U, M>& operator=(T const& v) noexcept { value = v; return *this; };		//copy assignable
+		strong_integral_t<T, P, U, M>& operator=(T const& v) noexcept { value = v; return *this; };			//copy assignable
 		strong_integral_t<T, P, U, M>& operator=(T&& v) noexcept { value = std::move(v); return *this; };	//copy assignable
 
-		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M> const&) noexcept = default;		//move assignable
-		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M>&&) noexcept = default;	//move assignable
+		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M> const&) noexcept = default;	//move assignable
+		strong_integral_t<T, P, U, M>& operator=(strong_integral_t<T, P, U, M>&&) noexcept = default;		//move assignable
+
+		strong_integral_t<T, P, U, M> operator+(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value + r.value }; };
+		strong_integral_t<T, P, U, M> operator-(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value - r.value }; };
+		strong_integral_t<T, P, U, M> operator*(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value * r.value }; };
+		strong_integral_t<T, P, U, M> operator/(strong_integral_t<T, P, U, M> const& r) { return strong_integral_t<T, P, U, M>{ value / r.value }; };
 
 		operator const T& () const noexcept { return value; }	//retrieve value
 		operator T& () noexcept { return value; }				//retrieve value

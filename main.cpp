@@ -64,5 +64,12 @@ int main() {
 	assert(gm == 0x0F);
 	assert(gu == 0xFE);
 
+	strong_size_t v1{13}, v2{5};
+	strong_size_t v3 = v1 + v2;
+	v3 = v1 - v2;
+	v3 = v1 * v2;
+	v3 = v1 / v2;
+	v1 = v2;
+
 }
 
