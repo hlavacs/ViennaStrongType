@@ -158,27 +158,27 @@ namespace vsty {
 	struct strong_integral_t : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M> {
 		strong_integral_t() noexcept = default;											//default constructible
 		explicit strong_integral_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M>(v) {};	//explicit from type T
-		explicit strong_integral_t(T&& v) noexcept : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M>(v) {};			//explicit from type T
+		explicit strong_integral_t(T&& v)      noexcept : strong_integral_tt<T, strong_integral_t<T, P, U, M>, P, U, M>(v) {};	//explicit from type T
 	};
 
 	/**
 	* \brief Strong integral type with a null value. 
 	*
 	* T...the type
-	* D...default value (=null value)
 	* P...phantom type as unique ID (can use __COUNTER__ or vsty::counter<>)
 	* U...number of upper bits (if integer is cut into 2 values), or else 0
 	* M...number of middle bits (if integer is cut into 3 values), or else 0
+	* D...default value (=null value)
 	*/
-	template<typename T,  auto P, auto D = std::numeric_limits<T>::max(), size_t U = 0, size_t M = 0>
+	template<typename T, auto P, size_t U = 0, size_t M = 0, auto D = std::numeric_limits<T>::max()>
 		requires std::is_integral_v<std::decay_t<T>>
-	struct strong_integral_null_t : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M> {
-		using strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>::value;
+	struct strong_integral_null_t : strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M> {
+		using strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M>::value;
 		static const T null{ D };
 
 		strong_integral_null_t() noexcept { value = D; };  //NOT default constructible
-		explicit strong_integral_null_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>(v) {};	//explicit from type T
-		explicit strong_integral_null_t(T&& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, D, U, M>, P, U, M>(v) {};			//explicit from type T
+		explicit strong_integral_null_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M>(v) {};	//explicit from type T
+		explicit strong_integral_null_t(T&& v)      noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M>(v) {}; //explicit from type T
 
 		bool has_value() const noexcept { return value != D; }
 	};

@@ -11,7 +11,7 @@ using strong_uint32_t	= vsty::strong_type_t< uint32_t, vsty::counter<> >;
 
 using strong_size_t		= vsty::strong_integral_t< size_t, vsty::counter<>, 16 >;
 using strong_size_t2	= vsty::strong_integral_t< uint32_t, vsty::counter<>, 8, 8 >;
-using strong_size_null_t = vsty::strong_integral_null_t< size_t, vsty::counter<>, std::numeric_limits<size_t>::max(), 8, 8 >;
+using strong_size_null_t = vsty::strong_integral_null_t< size_t, vsty::counter<>, 8, 8 >;
 
 using strong_float_t	= vsty::strong_type_t< float, vsty::counter<> >;
 using strong_double_t	= vsty::strong_type_t< double, vsty::counter<> >;
