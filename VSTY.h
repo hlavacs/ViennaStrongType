@@ -63,7 +63,7 @@ namespace vsty {
 		static const T null{D};
 		strong_type_null_t() { m_value = D; };
 		explicit strong_type_null_t(const T& v) : strong_type_t<T,P>(v) {};
-		bool has_m_value() const noexcept { return m_value != D; }
+		bool has_value() const noexcept { return m_value != D; }
 	};
 
 
@@ -182,7 +182,7 @@ namespace vsty {
 		explicit strong_integral_null_t(const T& v) noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M>(v) {};	//explicit from type T
 		explicit strong_integral_null_t(T&& v)      noexcept : strong_integral_tt<T, strong_integral_null_t<T, P, U, M, D>, P, U, M>(v) {}; //explicit from type T
 
-		bool has_m_value() const noexcept { return m_value != D; }
+		bool has_value() const noexcept { return m_value != D; }
 	};
 
 
