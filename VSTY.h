@@ -63,7 +63,7 @@ namespace vsty {
 		static const T null{D};
 		strong_type_null_t() { m_value = D; };
 		explicit strong_type_null_t(const T& v) : strong_type_t<T,P>(v) {};
-		bool has_value() const noexcept { return m_value != D; }
+		bool has_m_value() const noexcept { return m_value != D; }
 	};
 
 
