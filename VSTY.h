@@ -190,6 +190,20 @@ namespace vsty {
 		bool has_value() const noexcept { return m_value != D; }
 	};
 
+	//Helper functions to test with basic integer types instead of strong types
+	template<typename T>
+	T null_value() {
+		if constexpr (std::is_integral_v<std::decay_t<T>>) return std::numeric_limits<T>::max();
+		else return T{ T::null };
+	}
+
+	template<typename T>
+	bool has_value(T value) {
+		if constexpr (std::is_integral_v<std::decay_t<T>>) return value != null_value<T>();
+		else return value.has_value(); 
+	}
+
+
 
 	//--------------------------------------------------------------------------------------------
 	//type counter lifted from https://mc-deltat.github.io/articles/stateful-metaprogramming-cpp20
