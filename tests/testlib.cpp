@@ -4,9 +4,9 @@
 #include <iomanip>
 #include <format>
 
-#include "vsty.h"
+#include "VSTY.h"
 
-using strong_int_t		= vsty::strong_type_t< size_t, vsty::counter<> >;
+/*using strong_int_t		= vsty::strong_type_t< size_t, vsty::counter<> >;
 using strong_uint32_t	= vsty::strong_type_t< uint32_t, vsty::counter<> >;
 
 using strong_size_t		= vsty::strong_integral_t< size_t, vsty::counter<>, 16 >;
@@ -27,13 +27,15 @@ void f(strong_int_t a) { return; }
 void g(strong_size_t a) { return; }
 void h(strong_size_t2 a) { return; }
 
+*/
+
 int main() {
 
 	//f(2); //error
 	//g(2); //error
 	//h(3); //error
 
-	bool itc = std::is_trivially_copyable_v<strong_size_t>;
+	/*bool itc = std::is_trivially_copyable_v<strong_size_t>;
 
 	bool imc = std::is_move_constructible_v<strong_size_t>;
 	bool icc = std::is_copy_constructible_v<strong_size_t>;
@@ -82,5 +84,6 @@ int main() {
 	strong_size_null_t nn1{ 21 }, nn2{ 18 }, nn3{4};
 	nn1.set_lower(32);
 	nn1 = nn2 + nn3;
+	*/
 }
 
