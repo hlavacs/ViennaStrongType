@@ -54,25 +54,31 @@ namespace vsty {
 
 		/***
  		* \brief Get bits from the m_value
+		* \param first_bit...first bit to get, starts with 0
+		* \param number_bits...number of bits to get
 		*/
 		auto get_bits(const uint32_t first_bit, const uint32_t number_bits) const noexcept -> T requires std::unsigned_integral<T>  {
 			uint32_t nbits = sizeof(T) * 8;
 			assert(first_bit < nbits && first_bit + number_bits <= nbits);
 			if( number_bits == nbits) return m_value;
-			return (m_value >> first_bit) & ((1ull << number_bits) - 1);
+			auto val = (m_value >> first_bit) & ((1ull << number_bits) - 1);
+			return val;
 		}
 
 		/***
 		* \brief Set  bits in the m_value
+		* \param value...value to set
+		* \param first_bit...first bit to set, starts with 0
+		* \param number_bits...number of bits to set	
 		*/
 		void set_bits(const T&& value, const uint32_t first_bit, const uint32_t number_bits) requires std::unsigned_integral<T> {
 			uint32_t nbits = sizeof(T) * 8;
 			assert(first_bit + number_bits <= nbits);
+			assert(value < 1ull << number_bits);
 			if( number_bits >= nbits) { m_value = value; return; }
 
-			T umask = std::static_cast<T>(~0ull) << (first_bit + number_bits);
-			T lmask = std::static_cast<T>(~0ull);
-			if( first_bit > 0 ) lmask = (lmask << first_bit) - 1;
+			T umask = static_cast<T>(~0ull) << (first_bit + number_bits);
+			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;
 
 			m_value = (m_value & (umask | lmask)) | (value << first_bit);
 		}
