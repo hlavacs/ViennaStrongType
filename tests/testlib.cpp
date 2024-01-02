@@ -50,9 +50,6 @@ int main() {
 	sz1.set_bits(43105, 0, 16);
 	sz1.set_bits(255, 16, 8);
 	sz1.set_bits(103, 24, 8);
-	auto v11 = sz1.get_bits(0, 16);
-	auto v12 = sz1.get_bits(16, 8);
-	auto v13 = sz1.get_bits(24, 8);
 	assert(sz1.get_bits(0, 16) == 43105);
 	assert(sz1.get_bits(16, 8) == 255);
 	assert(sz1.get_bits(24, 8) == 103);
@@ -60,8 +57,6 @@ int main() {
 	strong_size_null_t sz2{0};
 	sz2.set_bits(462752, 0, 20);
 	sz2.set_bits(1036, 20, 12);
-	auto v21 = sz2.get_bits(0, 20);
-	auto v22 = sz2.get_bits(20, 12);
 	assert( sz2.get_bits(0, 20) == 462752);
 	assert( sz2.get_bits(20, 12) == 1036);
 
