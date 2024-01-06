@@ -72,9 +72,9 @@ int main() {
 	assert( sz4.get_bits_signed(0, 40) == -0xFAFA);
 	assert( sz4.get_bits_signed(40, 24) == 0xABAB);
 
-	strong_size_t sz5{-0xFAFA, 0xABAB, 40};
+	strong_size_t sz5{-0xFAFA, -0xABAB, 40};
 	assert( sz5.get_bits_signed(0, 40) == -0xFAFA);
-	assert( sz5.get_bits_signed(40, 24) == 0xABAB);
+	assert( sz5.get_bits_signed(40, 24) == -0xABAB);
 
 
 	/*bool itc = std::is_trivially_copyable_v<strong_size_t>;
