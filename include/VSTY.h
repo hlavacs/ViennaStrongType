@@ -70,12 +70,20 @@ namespace vsty {
 			return val;
 		}
 
+		auto get_bits(const size_t first_bit) const noexcept -> T requires std::unsigned_integral<T>  {
+			return get_bits(first_bit, sizeof(T) * 8ull - first_bit);
+		}
+
 		auto get_bits_signed(const size_t first_bit, const size_t number_bits) const noexcept -> T requires std::unsigned_integral<T>  {
 			auto value = get_bits(first_bit, number_bits);
 			if( value & (1ull << (number_bits - 1))) {
 				value |= static_cast<T>(~0ull) << number_bits;
 			}
 			return value;
+		}
+
+		auto get_bits_signed(const size_t first_bit) const noexcept -> T requires std::unsigned_integral<T>  {
+			return get_bits_signed(first_bit, sizeof(T) * 8ull - first_bit);
 		}
 
 		void set_bits(const T&& value, const size_t first_bit, const size_t number_bits) requires std::unsigned_integral<T> {

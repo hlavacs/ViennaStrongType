@@ -57,8 +57,8 @@ int main() {
 	strong_size_null_t sz2{0};
 	sz2.set_bits(462752, 0, 20);
 	sz2.set_bits(1036, 20, 12);
-	assert( sz2.get_bits(0, 20) == 462752);
-	assert( sz2.get_bits(20, 12) == 1036);
+	assert( sz2.get_bits(0, 40) == 462752);
+	assert( sz2.get_bits(40) == 1036);
 
 	strong_size_null_t sz3{0};
 	sz3.set_bits(462752, 0, 20);
@@ -74,7 +74,7 @@ int main() {
 
 	strong_size_t sz5{-0xFAFA, -0xABAB, 40};
 	assert( sz5.get_bits_signed(0, 40) == -0xFAFA);
-	assert( sz5.get_bits_signed(40, 24) == -0xABAB);
+	assert( sz5.get_bits_signed(40) == -0xABAB);
 
 
 	/*bool itc = std::is_trivially_copyable_v<strong_size_t>;
