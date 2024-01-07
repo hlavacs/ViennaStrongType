@@ -11,6 +11,7 @@ project (
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*;readability-*;cppcoreguidelines-*;-header-filter=.*;)
+# clang-tidy .\testlib.cpp -extra-arg=-std=c++20 -checks="-*;readability-*;cppcoreguidelines-*;-header-filter=.*;"
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   include(CTest)
