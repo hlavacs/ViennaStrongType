@@ -31,7 +31,7 @@ namespace vsty {
 		}
 
         explicit strong_type_t(T&& v1, T&& v2, size_t number_bits1) noexcept requires std::unsigned_integral<T> { 
-			set_bits(std::forward<T>(v1), 0ull, number_bits1); 
+			set_bits(std::forward<T>(v1), 0ULL, number_bits1); 
 			set_bits(std::forward<T>(v2), number_bits1); 	
 		}
 
