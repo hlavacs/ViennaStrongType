@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <format>
 
-#include "../include/VSTY.h"
+#include "VSTY.h"
 
 
 using strong_int_t		= vsty::strong_type_t< int, vsty::counter<> >;
