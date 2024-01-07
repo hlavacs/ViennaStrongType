@@ -89,18 +89,11 @@ namespace vsty {
 		void set_bits(const T&& value, const size_t first_bit, const size_t number_bits) requires std::unsigned_integral<T> {
 			uint32_t nbits = sizeof(T) * 8;
 			assert(first_bit + number_bits <= nbits);
-			//assert(static_cast<T>(abs(value)) < 1ull << number_bits);
 			if( number_bits >= nbits) { m_value = value; return; }
 
 			T umask = first_bit + number_bits < nbits ? static_cast<T>(~0ull) << (first_bit + number_bits) : 0;
-			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;
-			//std::cout << "umask = " << std::setfill('0') << std::setw(16) << std::hex << umask << std::endl;
-			//std::cout << "lmask = " << std::setfill('0') << std::setw(16) << std::hex << lmask << std::endl;
-			//std::cout << "value = " << std::setfill('0') << std::setw(16) << std::hex << value << std::endl;
-			//std::cout << "value << first_bit = " << std::setfill('0') << std::setw(16) << std::hex << (value << first_bit) << std::endl;
-
+			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;			
 			m_value = (m_value & (umask | lmask)) | ((value << first_bit) & ~umask & ~lmask);
-			//std::cout << "m_value = " << std::setfill('0') << std::setw(16) << std::hex << m_value << std::endl;
 		}
 
 		void set_bits(const T&& value, const size_t first_bit) requires std::unsigned_integral<T> {

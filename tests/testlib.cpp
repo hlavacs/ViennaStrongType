@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <format>
 
-#include "VSTY.h"
+#include "../include/VSTY.h"
 
 
 using strong_int_t		= vsty::strong_type_t< int, vsty::counter<> >;
@@ -56,7 +56,7 @@ int main() {
 
 	strong_size_null_t sz2{0};
 	sz2.set_bits(462752, 0, 40);
-	sz2.set_bits(1036, 40, 24);
+	sz2.set_bits(1036, 40);
 	assert( sz2.get_bits(0, 40) == 462752);
 	assert( sz2.get_bits(40) == 1036);
 
