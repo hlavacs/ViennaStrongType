@@ -64,6 +64,8 @@ namespace vsty {
 			assert(first_bit + number_bits <= nbits);
 			if( number_bits >= nbits) { m_value = value; return; }
 
+			
+
 			T umask = first_bit + number_bits < nbits ? static_cast<T>(~0ull) << (first_bit + number_bits) : 0;
 			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;			
 			m_value = (m_value & (umask | lmask)) | ((value << first_bit) & ~umask & ~lmask);
