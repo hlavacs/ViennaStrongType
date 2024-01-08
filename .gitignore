@@ -27,7 +27,7 @@ _deps
 **/*.depend
 **/*.pdb
 
-/build/
+build/
 *.ninja_deps
 *.ninja_log
 *.ninja
