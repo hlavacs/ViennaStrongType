@@ -27,6 +27,11 @@ _deps
 **/*.depend
 **/*.pdb
 
+build/*
+*.ninja_deps
+*.ninja_log
+*.ninja
+
 # MSVC cmake project files
 ALL_BUILD.vcxproj
 ZERO_CHECK.vcxproj

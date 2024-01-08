@@ -25,14 +25,10 @@ namespace vsty {
         explicit strong_type_t(const T& v) noexcept { m_value = v; };	//explicit from type T
         explicit strong_type_t(T&& v) noexcept { m_value = v; };	//explicit from type T
 
-        explicit strong_type_t(const T& v1, const T& v2, size_t number_bits1) noexcept requires std::unsigned_integral<T> { 
-			set_bits(std::forward<const T>(v1), 0ull, number_bits1); 
-			set_bits(std::forward<const T>(v2), number_bits1);
-		}
-
-        explicit strong_type_t(T&& v1, T&& v2, size_t number_bits1) noexcept requires std::unsigned_integral<T> { 
-			set_bits(std::forward<T>(v1), 0ULL, number_bits1); 
-			set_bits(std::forward<T>(v2), number_bits1); 	
+		template<typename A>
+        explicit strong_type_t(A v1, A v2, size_t number_bits1) noexcept requires (std::integral<A> && std::unsigned_integral<T>) { 
+			set_bits(v1, 0ULL, number_bits1); 
+			set_bits(v2, number_bits1); 	
 		}
 
         strong_type_t( strong_type_t<T, P, D> const &) noexcept = default;		//copy constructible
@@ -62,7 +58,8 @@ namespace vsty {
 
 		//-----------------------------------------------------------------------------------
 
-		void set_bits(const T&& value, const size_t first_bit, const size_t number_bits) requires std::unsigned_integral<T> {
+		template<typename A>
+		void set_bits(A value, const size_t first_bit, const size_t number_bits) requires (std::integral<A> && std::unsigned_integral<T>) {
 			uint32_t nbits = sizeof(T) * 8;
 			assert(first_bit + number_bits <= nbits);
 			if( number_bits >= nbits) { m_value = value; return; }
@@ -72,7 +69,8 @@ namespace vsty {
 			m_value = (m_value & (umask | lmask)) | ((value << first_bit) & ~umask & ~lmask);
 		}
 
-		void set_bits(const T&& value, const size_t first_bit) requires std::unsigned_integral<T> {
+		template<typename A>
+		void set_bits(A value, const size_t first_bit) requires (std::integral<A> && std::unsigned_integral<T>) {
 			return set_bits(std::forward<const T>(value), first_bit, sizeof(T) * 8ull - first_bit);
 		}
 
