@@ -76,6 +76,18 @@ int main() {
 	assert( sz5.get_bits_signed(0, 40) == -0xFAFA);
 	assert( sz5.get_bits_signed(40) == -0xABAB);
 
+	strong_size_t sz6{32765432, 23564, 40};
+	assert( sz6.get_bits_signed(0, 40) == 32765432);
+	assert( sz6.get_bits_signed(40) == 23564);
+
+	strong_size_t sz7{32765432, -23564, 40};
+	assert( sz7.get_bits_signed(0, 40) == 32765432);
+	assert( sz7.get_bits_signed(40) == -23564);
+
+	strong_size_t sz8{-32765432, 23564, 40};
+	assert( sz8.get_bits_signed(0, 40) == -32765432);
+	assert( sz8.get_bits_signed(40) == 23564);
+
 
 	/*bool itc = std::is_trivially_copyable_v<strong_size_t>;
 	bool imc = std::is_move_constructible_v<strong_size_t>;

@@ -10,6 +10,8 @@ namespace vsty {
 		{ std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
 	};
 
+	template<typename A, typename T>
+	concept compatible = ( (std::integral<A> && std::unsigned_integral<T> ) );
 
 	/**
 	* \brief General strong type
@@ -22,13 +24,13 @@ namespace vsty {
     struct strong_type_t {
         strong_type_t() noexcept requires (std::is_same_v<D, void>) = default;					//default constructible
         strong_type_t() noexcept requires (!std::is_same_v<D, void>) { m_value = D::value; };	//explicit from a NULL value
-        explicit strong_type_t(const T& v) noexcept { m_value = v; };	//explicit from type T
-        explicit strong_type_t(T&& v) noexcept { m_value = v; };	//explicit from type T
+        explicit strong_type_t(const T& val) noexcept { m_value = val; };	//explicit from type T
+        explicit strong_type_t(T&& val) noexcept { m_value = val; };	//explicit from type T
 
 		template<typename A>
-        explicit strong_type_t(A v1, A v2, size_t number_bits1) noexcept requires (std::integral<A> && std::unsigned_integral<T>) { 
-			set_bits(v1, 0ULL, number_bits1); 
-			set_bits(v2, number_bits1); 	
+        explicit strong_type_t(const A&& val1, const A&& val2, size_t number_bits1) noexcept requires compatible<A,T> { 
+			set_bits(std::forward<const A>(val1), 0ULL, number_bits1); 
+			set_bits(std::forward<const A>(val2), number_bits1); 	
 		}
 
         strong_type_t( strong_type_t<T, P, D> const &) noexcept = default;		//copy constructible
@@ -59,21 +61,29 @@ namespace vsty {
 		//-----------------------------------------------------------------------------------
 
 		template<typename A>
-		void set_bits(A value, const size_t first_bit, const size_t number_bits) requires (std::integral<A> && std::unsigned_integral<T>) {
+		void set_bits(A val, const size_t first_bit, const size_t number_bits) requires compatible<A,T> {
+			T value = static_cast<T>(val);
 			uint32_t nbits = sizeof(T) * 8;
 			assert(first_bit + number_bits <= nbits);
 			if( number_bits >= nbits) { m_value = value; return; }
 
-			
-
 			T umask = first_bit + number_bits < nbits ? static_cast<T>(~0ull) << (first_bit + number_bits) : 0;
 			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;			
+
+			//std::cout << "\nnew value          = " << std::setfill('0') << std::setw(16) << std::hex << value << std::dec << " first_bit = " << first_bit << " number_bits = " << number_bits <<  std::endl;
+			//std::cout << "  m_value          = " << std::setfill('0') << std::setw(16) << std::hex << m_value << std::endl;
+			//std::cout << "    umask          = " << std::setfill('0') << std::setw(16) << std::hex << umask << std::endl;
+			//std::cout << "    lmask          = " << std::setfill('0') << std::setw(16) << std::hex << lmask << std::endl;
+			//std::cout << "    value          = " << std::setfill('0') << std::setw(16) << std::hex << value << std::endl;
+			//std::cout << "value << first_bit = " << std::setfill('0') << std::setw(16) << std::hex << (value << first_bit) << std::endl;
+
 			m_value = (m_value & (umask | lmask)) | ((value << first_bit) & ~umask & ~lmask);
+			//std::cout << "  m_value          = " << std::setfill('0') << std::setw(16) << std::hex << m_value << std::endl;
 		}
 
 		template<typename A>
-		void set_bits(A value, const size_t first_bit) requires (std::integral<A> && std::unsigned_integral<T>) {
-			return set_bits(std::forward<const T>(value), first_bit, sizeof(T) * 8ull - first_bit);
+		void set_bits(const A&& value, const size_t first_bit) requires compatible<A,T> {
+			return set_bits(std::forward<const A>(value), first_bit, sizeof(T) * 8ull - first_bit);
 		}
 
 		auto get_bits(const size_t first_bit, const size_t number_bits) const noexcept -> T requires std::unsigned_integral<T>  {
