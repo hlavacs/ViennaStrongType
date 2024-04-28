@@ -96,6 +96,14 @@ int main() {
 	atom2.store(strong_size_null_t{1});
 
 
+	strong_size_t sz9{4};
+	std::cout << "Load: " << sz9.load() << std::endl;
+	sz9.store( 5 );
+	std::cout << "Load: " << sz9.load() << std::endl;
+	int i = 6;
+	sz9.store( i );
+	std::cout << "Load: " << sz9.load() << std::endl;
+
 
 }
 
