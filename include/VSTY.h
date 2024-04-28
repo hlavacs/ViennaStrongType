@@ -47,6 +47,9 @@ namespace vsty {
         strong_type_t<T, P, D>& operator=(strong_type_t<T, P, D>&&) noexcept = default;			//move assignable
 
 		T& value() noexcept { return m_value; }	//get reference to the value
+		T load() noexcept { return m_value; }	//get the value
+		void store( const T& value ) noexcept { m_value = value;  }	//store the value
+		void store( T&& value ) noexcept { m_value = value;  }	//store the value
 		operator const T& () const noexcept { return m_value; }	//retrieve m_value
 		operator T& () noexcept { return m_value; }				//retrieve m_value
 
