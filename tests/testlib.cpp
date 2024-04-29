@@ -100,10 +100,12 @@ int main() {
 	std::cout << "Load: " << sz9.load() << std::endl;
 	sz9.store( 5 );
 	std::cout << "Load: " << sz9.load() << std::endl;
-	int i = 6;
+	size_t i = 6;
 	sz9.store( i );
 	std::cout << "Load: " << sz9.load() << std::endl;
 
+	sz9.compare_exchange_weak( i, 7 );
+	std::cout << "Load: " << sz9.load() << std::endl;
 
 }
 
