@@ -37,6 +37,17 @@ int main() {
 	g(strong_size_t{ 2 });
 	h(strong_size2_t{ 3 });
 
+	strong_size_null_t sz0;
+	assert(sz0.has_value() == false);
+	sz0 = 0;	
+	assert(sz0.has_value() == true);
+	sz0.set_bits(43105542, 0, 32);
+	sz0.set_bits(25125, 32, 24);
+	sz0.set_bits(193, 32+24, 8);
+	assert(sz0.get_bits(0, 32) == 43105542);
+	assert(sz0.get_bits(32, 24) == 25125);
+	assert(sz0.get_bits(32+24) == 193);
+
 	strong_size_null_t sz1;
 	assert(sz1.has_value() == false);
 	sz1 = 0;	
