@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <format>
 #include <memory>
+#include <bitset>
 #include <atomic>
 
 namespace vsty {
@@ -90,14 +91,15 @@ namespace vsty {
 			T umask = first_bit + number_bits < nbits ? static_cast<T>(~0ull) << (first_bit + number_bits) : 0;
 			T lmask = first_bit > 0ull ? (1ull << first_bit) - 1 : 0ull;			
 
-			//std::cout << "\nnew value          = " << std::setfill('0') << std::setw(16) << std::hex << value << std::dec << " first_bit = " << first_bit << " number_bits = " << number_bits <<  std::endl;
-			//std::cout << "  m_value          = " << std::setfill('0') << std::setw(16) << std::hex << m_value << std::endl;
-			//std::cout << "    umask          = " << std::setfill('0') << std::setw(16) << std::hex << umask << std::endl;
-			//std::cout << "    lmask          = " << std::setfill('0') << std::setw(16) << std::hex << lmask << std::endl;
-			//std::cout << "    value          = " << std::setfill('0') << std::setw(16) << std::hex << value << std::endl;
-			//std::cout << "value << first_bit = " << std::setfill('0') << std::setw(16) << std::hex << (value << first_bit) << std::endl;
+			//std::cout << "\nnew value          = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{value} << std::dec << " first_bit = " << first_bit << " number_bits = " << number_bits <<  std::endl;
+			//std::cout << "  m_value          = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{m_value}  << std::endl;
+			//std::cout << "    umask          = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{umask} << std::endl;
+			//std::cout << "    lmask          = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{lmask} << std::endl;
+			//std::cout << "    value          = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{value} << std::endl;
+			//std::cout << "value << first_bit = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{(value << first_bit)} << std::endl;
 
 			m_value = (m_value & (umask | lmask)) | ((value << first_bit) & ~umask & ~lmask);
+			//std::cout << "  new m_value      = " << std::setfill('0') << std::setw(16) << std::hex << std::bitset<64>{m_value}  << std::endl;
 			return m_value;
 			//std::cout << "  m_value          = " << std::setfill('0') << std::setw(16) << std::hex << m_value << std::endl;
 		}
