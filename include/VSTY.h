@@ -29,7 +29,7 @@ namespace vsty {
         strong_type_t() noexcept requires (std::is_same_v<D, void>) = default;					//default constructible
         strong_type_t() noexcept requires (!std::is_same_v<D, void>) { m_value = D::value; };	//explicit from a NULL value
         explicit strong_type_t(const T& val) noexcept { m_value = val; };	//explicit from type T
-        explicit strong_type_t(T&& val) noexcept { m_value = val; };	//explicit from type T
+        explicit strong_type_t(T&& val) noexcept { m_value = std::forward<T>(val); };	//explicit from type T
 
 		template<typename U, typename V>
         explicit strong_type_t(U val1, V val2, size_t number_bits1) noexcept requires std::unsigned_integral<T> { 
@@ -41,7 +41,7 @@ namespace vsty {
         strong_type_t( strong_type_t<T, P, D>&&) noexcept = default;			//move constructible
 
         strong_type_t<T, P, D>& operator=(T const& v) noexcept { m_value = v; return *this; };		//copy assignable from type T
-        strong_type_t<T, P, D>& operator=(T&& v) noexcept { m_value = v; return *this; };	//copy assignable from type T
+        strong_type_t<T, P, D>& operator=(T&& v) noexcept { m_value = std::forward<T>(v); return *this; };	//copy assignable from type T
 
         strong_type_t<T, P, D>& operator=(strong_type_t<T, P, D> const&) noexcept = default;	//move assignable
         strong_type_t<T, P, D>& operator=(strong_type_t<T, P, D>&&) noexcept = default;			//move assignable
@@ -69,7 +69,7 @@ namespace vsty {
 
 		T load() noexcept { return m_value; }	//get the value
 		void store( const T& value ) noexcept { m_value = value;  }	//store the value
-		void store( T&& value ) noexcept { m_value = value;  }	//store the value
+		void store( T&& value ) noexcept { m_value = std::forward<T>(value);  }	//store the value
 		bool compare_exchange_weak( T& expected, T desired ) {
 			if( m_value != expected) return false; //might turn this into an assert
 			m_value = desired;
