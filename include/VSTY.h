@@ -52,6 +52,8 @@ namespace vsty {
 		operator const T& () const noexcept { return m_value; }	//retrieve m_value
 		operator T& () noexcept { return m_value; }				//retrieve m_value
 
+		T& operator()() noexcept { return m_value; }	//retrieve m_value
+
 		auto operator<=>(const strong_type_t<T, P, D>& v) const = default;
 	
 		struct equal_to {
