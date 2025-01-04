@@ -53,7 +53,7 @@ namespace vsty {
 		operator T& () noexcept { return m_value; }				//retrieve m_value
 
 		T& operator()() noexcept { return m_value; }	//retrieve m_value
-		T& operator()() const noexcept { return m_value; }	//retrieve m_value
+		T const & operator()() const noexcept { return m_value; }	//retrieve m_value
 
 		auto operator<=>(const strong_type_t<T, P, D>& v) const = default;
 	
