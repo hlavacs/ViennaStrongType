@@ -27,6 +27,16 @@ namespace vsty {
 	*/
     template<typename T, auto P, typename D = void >
     struct strong_type_t {
+		using value_type = T;
+		using phantom_type = decltype(P);
+		using default_type = D;
+
+		template <typename U, auto Q, typename R>
+		struct is_strong_type : public std::false_type {};
+
+		template <typename U, auto S, typename V, auto Q, typename R>
+		struct is_strong_type<strong_type_t<U, S, V>, Q, R> : public std::true_type {};
+
         strong_type_t() noexcept requires (std::is_same_v<D, void>) = default;					//default constructible
         strong_type_t() noexcept requires (!std::is_same_v<D, void>) { m_value = D::value; };	//explicit from a NULL value
         explicit strong_type_t(const T& val) noexcept { m_value = val; };	//explicit from type T
@@ -65,7 +75,8 @@ namespace vsty {
             std::size_t operator()(const strong_type_t<T, P, D>& tag) const noexcept requires Hashable<std::decay_t<T>> { return std::hash<T>()(tag.m_value); };
         };
 
-		bool has_value() const noexcept requires (!std::is_same_v<D, void>) { return m_value != D::value; }
+		bool has_value() const noexcept requires ((!is_strong_type<T,P,D>::value) && (!std::is_same_v<D, void>)) { return m_value != D::value; }
+		bool has_value() const noexcept requires (is_strong_type<T,P,D>::value) { return m_value.has_value(); }
 
 		//-----------------------------------------------------------------------------------
 		// interface mimicking atomic operations - can be used if you selectively want to mimick atomic operations
